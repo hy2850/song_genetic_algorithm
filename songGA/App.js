@@ -60,8 +60,8 @@ function setup() {
   stats.class("stats");
 
   //createCanvas(640, 360);
-  //target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
-  target = [10, 15, 20, 5, 7]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  //target = [10, 15, 20, 5, 7]; // C3 D4 E4 F4 G4 A4 B4 Octav
 
   targetHTML = createP("Target:");
   targetHTML.class("target");
@@ -73,7 +73,8 @@ function setup() {
 function draw() {
   population.calPopulationFitness();
 
-  population.selectParents();
+  //population.selectParents.roulette.call(population);
+  population.selectParents.tournament.call(population, popsize/2);
 
   population.produceOffspring();
 

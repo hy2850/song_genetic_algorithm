@@ -56,25 +56,36 @@ class Population {
   }
 
   // Step 2. Select parents to form mating pool
-  selectParents() {
-    const N = this.parentPop.length;
-
-    // Roulette + FPS
-    let cumProb = []; // cumulative probability, proportional to fitness
-    let p = mapFitnessToProb(this.parentPop[0].fitness, this.#fitsum);
-    cumProb[0] = p;
-    for (let i = 1; i < N; i++) {
-      p = mapFitnessToProb(this.parentPop[i].fitness, this.#fitsum);
-      cumProb[i] = cumProb[i-1] + p;
-    }
-
-    this.matingPool = []
-    for (let i = 0; i < N; i++) {
-      let j = 0;
-      while(cumProb[j] < random()){
-        j++;
+  selectParents = {
+    roulette: function(){  
+      // Roulette + FPS
+      let cumProb = []; // cumulative probability, proportional to fitness
+      let p = mapFitnessToProb(this.parentPop[0].fitness, this.#fitsum);
+      cumProb[0] = p;
+      for (let i = 1; i < popsize; i++) {
+        p = mapFitnessToProb(this.parentPop[i].fitness, this.#fitsum);
+        cumProb[i] = cumProb[i-1] + p;
       }
-      this.matingPool[i] = this.parentPop[j];
+  
+      this.matingPool = []
+      for (let i = 0; i < popsize; i++) {
+        let j = 0;
+        while(cumProb[j] < random()){
+          j++;
+        }
+        this.matingPool[i] = this.parentPop[j];
+      }
+    },
+    tournament: function(K){
+      // tournament - select best among randomly chosen K
+      for (let i = 0; i < popsize; i++) {
+        let tmp = []
+        for (let j = 0; j < K; j++) {
+          tmp.push(random(this.parentPop));
+        }
+        tmp.sort(compareFitnessDec);
+        this.matingPool[i] = tmp[0];
+      }
     }
   }
 
@@ -103,7 +114,7 @@ class Population {
 
     // Replace 'replaceCnt' individuals with lowest fitness from parent with same amount of best offsprings
     for (let i = 0; i < replaceCnt; i++) {
-    //for (let i = 0; i < this.population.length; i++) {
+    //for (let i = 0; i < popsize; i++) {
       this.parentPop[i] = this.childPop[i];
     }
   }
