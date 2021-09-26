@@ -15,8 +15,7 @@ let popsize = 200, mutation_rate = 0.01;
 
 function setup() {
   noLoop();
-  createCanvas(1000, 1000);
-
+  
   let span1 = createSpan('Enter population size ');
   span1.position(20, 50);
   inp1 = createInput();
@@ -65,7 +64,6 @@ function setup() {
   //stats.position(10,200);
   stats.class("stats");
 
-  //createCanvas(640, 360);
   //target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
   target = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // C3 D4 E4 F4 G4 A4 B4 Octav
   targetLen = target.length;
@@ -78,13 +76,13 @@ function setup() {
   //bestSong = new Song(targetLen);
 
   // UI for music notes
-  const sheet_pos = {
-    x: 100,
-    y: 180
-  };
+  const sheetX = 100, sheetY = 180, sheetH = 8*h;
+  const beatsPerSheet = 10;
+  createCanvas(linelen * beatsPerSheet, sheetH * (ceil(targetLen/beatsPerSheet) + 1));
+
   sheet = []
   for(let i=0; i<targetLen; i++){
-    sheet[i] = new Beat(i, {x: sheet_pos.x + linelen*i, y: sheet_pos.y});
+    sheet[i] = new Beat(i, {x: sheetX + linelen*(i%beatsPerSheet), y: sheetY + sheetH * floor(i/beatsPerSheet)});
   }
 }
 

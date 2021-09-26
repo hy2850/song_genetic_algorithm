@@ -37,20 +37,23 @@ class Beat {
         let noteX = this.x + (linelen/2), noteY = this.y + 6*h - idx*(h/2)
         let noteWidth = 2*r + (color == 'red' ? 5 : 0), noteHeight = 2*r-10;
 
-        // translate(noteX, noteY);
-        // rotate(-PI / 12);
+        angleMode(DEGREES);
+        translate(noteX, noteY);
+        rotate(-10);
 
         fill(color);
         stroke(color);
-        ellipse(noteX, noteY, noteWidth, noteHeight);
+        //ellipse(noteX, noteY, noteWidth, noteHeight);
+        ellipse(0, 0, noteWidth, noteHeight);
+
+        rotate(10);
+        translate(-noteX, -noteY);
 
         if (noteNum == 0)
             line(noteX - noteWidth + 8, noteY, noteX + noteWidth - 8, noteY); // for note 'C'
-        stroke('black')
-        //noFill();
 
-        // rotate(PI / 12);
-        // translate(0, 0);
+        stroke('black') // reset
+        //noFill();
     }
 
     play(){
@@ -65,17 +68,19 @@ class Beat {
         }
         
         const ans = target[this.nth];
-        let drawTarget = true; 
+        let drawTargetBlack = true; 
         if(bestSong) {
             const best = bestSong.notes[this.nth];
+
+            // Matching note
             if (ans === best){
                 this.drawNote(target[this.nth], 'blue');
-                drawTarget = false;
+                drawTargetBlack = false;
             }
             else
                 this.drawNote(bestSong.notes[this.nth], 'red');
         }
-        if(drawTarget)
+        if(drawTargetBlack)
             this.drawNote(target[this.nth], 'black');
 
         //if(bestSong && target[this.nth] != bestSong.notes[this.nth]) this.drawNote(bestSong.notes[this.nth], 'red');
