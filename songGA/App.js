@@ -7,12 +7,15 @@ let isLoopRunning = false;
 let targetHTML;
 let inp1, button1, inp2, button2;
 let generation = 0;
-let sheet;
+let musicSheet;
 
 // Hyperparameters
 let popsize = 200, mutation_rate = 0.01;
 
 // Adjustable constants for Sheet
+const beatsPerSheet = 10;
+
+let osc, freq, amp;
 
 function setup() {
   noLoop();
@@ -53,6 +56,7 @@ function setup() {
   });
 
 
+
   bestPhrase = createP("Best phrase:");
   //bestPhrase.position(10,10);
   bestPhrase.class("best");
@@ -65,8 +69,8 @@ function setup() {
   //stats.position(10,200);
   stats.class("stats");
 
-  //target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
-  target = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  //target = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // C3 D4 E4 F4 G4 A4 B4 Octav
   targetLen = target.length;
 
   targetHTML = createP("Target:");
@@ -78,16 +82,33 @@ function setup() {
 
   // UI for music notes
   const sheetX = 100, sheetY = 180, sheetH = 8*h;
-  const beatsPerSheet = 10;
-  createCanvas(linelen * beatsPerSheet, sheetH * (ceil(targetLen/beatsPerSheet) + 1));
+  createCanvas(linelen * (beatsPerSheet+1), sheetH * (ceil(targetLen/beatsPerSheet) + 1));
+  
+  // sheet = []
+  // for(let i=0; i<targetLen; i++){
+  //   sheet[i] = new Beat(i, {x: sheetX + linelen*(i%beatsPerSheet), y: sheetY + sheetH * floor(i/beatsPerSheet)});
+  // }
+  musicSheet = new Sheet(sheetX, sheetY, sheetH);
 
-  sheet = []
-  for(let i=0; i<targetLen; i++){
-    sheet[i] = new Beat(i, {x: sheetX + linelen*(i%beatsPerSheet), y: sheetY + sheetH * floor(i/beatsPerSheet)});
-  }
+  osc = new p5.Oscillator('sine');
+
+
+  let playButton = createButton('playMusic');
+  playButton.position(span1.x + 100)
+  playButton.mousePressed(()=>{
+    musicSheet.playMusic();
+  });
+  background('white');
 }
 
 function draw() {
+  // osc.freq(261.63, 0.2);
+  // osc.freq(277.18, 0.2);
+  // osc.freq(369.9944, 0.2);
+  // osc.freq(493.8833, 0.2);
+  // osc.amp(0, 0.5);
+  // osc.start();
+
   population.calPopulationFitness();
 
   population.selectParents.roulette.call(population);
@@ -122,13 +143,15 @@ function viewUpdate() {
   statstext +=
     "average fitness:       " + nf(population.getAverageFitness()) + "<br>";
   statstext += "total population:      " + popsize + "<br>";
-  statstext += "mutation rate:         " + floor(mutation_rate * 100) + "%";
+  statstext += "mu tation rate:         " + floor(mutation_rate * 100) + "%";
 
   stats.html(statstext);
 
 
   clear();
-  console.log(sheet)
-  for(const b of sheet)
-    b.display();
+
+  musicSheet.display();
+  // console.log(sheet)
+  // for(const b of sheet)
+  //   b.display();
 }

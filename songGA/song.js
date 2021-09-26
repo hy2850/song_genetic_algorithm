@@ -31,9 +31,9 @@ class Song {
 }
 
 // Create new note
-// 0~36 : note (C3~B5) for 3 octaves
-// 37 : rest
-// 38 : continue previous note (testing)
+// 0~35 : note (C3~B5) for 3 octaves
+// 36 : rest
+// 37 : continue previous note (testing)
 function newNote() {
   return floor(random(0,38));
 }
