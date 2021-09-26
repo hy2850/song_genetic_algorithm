@@ -1,15 +1,21 @@
 let target;
 let population;
-
-let targetHTML;
-let popsize = 200, mutation_rate = 0.01;
-let inp1, button1, inp2, button2;
-
+let targetLen;
 let isLoopRunning = false;
+
+// UI
+let targetHTML;
+let inp1, button1, inp2, button2;
 let generation = 0;
+let sheet;
+
+// Hyperparameters
+let popsize = 200, mutation_rate = 0.01;
+
 
 function setup() {
   noLoop();
+  createCanvas(1000, 1000);
 
   let span1 = createSpan('Enter population size ');
   span1.position(20, 50);
@@ -60,14 +66,26 @@ function setup() {
   stats.class("stats");
 
   //createCanvas(640, 360);
-  target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
-  //target = [10, 15, 20, 5, 7]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  //target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  target = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  targetLen = target.length;
 
   targetHTML = createP("Target:");
   targetHTML.class("target");
 
   // Init population
   population = new Population();
+  //bestSong = new Song(targetLen);
+
+  // UI for music notes
+  const sheet_pos = {
+    x: 100,
+    y: 180
+  };
+  sheet = []
+  for(let i=0; i<targetLen; i++){
+    sheet[i] = new Beat(i, {x: sheet_pos.x + linelen*i, y: sheet_pos.y});
+  }
 }
 
 function draw() {
@@ -95,7 +113,7 @@ function draw() {
 
 function viewUpdate() {
   // Display current status of population
-  let answer = population.bestSong;
+  let answer = bestSong;
   bestPhrase.html("Best phrase:<br>" + answer.notes);
 
   targetHTML.html(target);
@@ -108,4 +126,10 @@ function viewUpdate() {
   statstext += "mutation rate:         " + floor(mutation_rate * 100) + "%";
 
   stats.html(statstext);
+
+
+  clear();
+  console.log(sheet)
+  for(const b of sheet)
+    b.display();
 }

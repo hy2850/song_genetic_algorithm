@@ -19,14 +19,13 @@ const compareFitnessDec = (s1, s2)=>{
     return -1;
 }
 
+let bestSong;
 
 class Population {
   // Private
   #fitsum
 
   constructor() {    
-    this.bestSong; 
-
     this.parentPop = []; // Main population
     this.matingPool = [];
     this.childPop = []; // Child population for step 3 - 'produceOffspring'
@@ -122,7 +121,7 @@ class Population {
   // Find individual with best fitness
   findBest() {
     this.parentPop.sort(compareFitnessDec);
-    this.bestSong = this.parentPop[0];
+    bestSong = this.parentPop[0];
   }
 
   // Calculate average fitness of the whole population
