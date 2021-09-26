@@ -12,6 +12,7 @@ let sheet;
 // Hyperparameters
 let popsize = 200, mutation_rate = 0.01;
 
+// Adjustable constants for Sheet
 
 function setup() {
   noLoop();
@@ -89,8 +90,8 @@ function setup() {
 function draw() {
   population.calPopulationFitness();
 
-  //population.selectParents.roulette.call(population);
-  population.selectParents.tournament.call(population, popsize/2);
+  population.selectParents.roulette.call(population);
+  //population.selectParents.tournament.call(population, popsize/2);
 
   population.produceOffspring();
 

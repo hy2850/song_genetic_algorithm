@@ -14,36 +14,38 @@ class Beat {
     drawNote(val, color='black'){
         let noteNum = val % 12;
         
+        const idx = Math.floor((noteNum+1)/2); // where to put the note
+        let noteX = this.x + (linelen/2), noteY = this.y + 6*h - idx*(h/2)
+        let noteWidth = 2*r + (color == 'red' ? 5 : 0), noteHeight = 2*r-10;
+        // note figure - elipse, target (black) and best note (red) does not overlap
+
+        fill(color);
+        stroke(color);
+        textSize(36);
+
         // Sharp
         let isSharp = false;
         const SHARP = [1, 3, 6, 8, 10];
         if(SHARP.includes(noteNum)){
             noteNum--;
-            isSharp = true;
+            text('#', noteX - noteWidth, noteY + 10);
         }
 
-        // Octave
-        let octave = 0;
+        // Octave - indicated by the arrow on the top of the beat
         switch(floor(val/12)){
             case 0:
-                octave = -1;
+                text('↓', noteX - r + (color === 'red' ? 10 : 0), this.y);
                 break
             case 2:
-                octave = 1;
+                text('↑', noteX - r + (color === 'red' ? 10 : 0), this.y);
+
                 break
         }
-
-        const idx = Math.floor((noteNum+1)/2);
-        let noteX = this.x + (linelen/2), noteY = this.y + 6*h - idx*(h/2)
-        let noteWidth = 2*r + (color == 'red' ? 5 : 0), noteHeight = 2*r-10;
 
         angleMode(DEGREES);
         translate(noteX, noteY);
         rotate(-10);
 
-        fill(color);
-        stroke(color);
-        //ellipse(noteX, noteY, noteWidth, noteHeight);
         ellipse(0, 0, noteWidth, noteHeight);
 
         rotate(10);
@@ -51,9 +53,6 @@ class Beat {
 
         if (noteNum == 0)
             line(noteX - noteWidth + 8, noteY, noteX + noteWidth - 8, noteY); // for note 'C'
-
-        stroke('black') // reset
-        //noFill();
     }
 
     play(){
@@ -82,7 +81,5 @@ class Beat {
         }
         if(drawTargetBlack)
             this.drawNote(target[this.nth], 'black');
-
-        //if(bestSong && target[this.nth] != bestSong.notes[this.nth]) this.drawNote(bestSong.notes[this.nth], 'red');
     }
   }
