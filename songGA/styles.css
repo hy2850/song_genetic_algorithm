@@ -23,3 +23,12 @@ img {
   position: absolute;
   top: 450px;
 }
+
+#all-container {
+  position: absolute;
+  left: 1200px;
+  top: 10px;
+}
+#all-container summary {
+  font-size: 36px;
+}

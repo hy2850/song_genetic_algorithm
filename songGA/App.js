@@ -19,8 +19,8 @@ function setup() {
 
   textInit(20, 20);
 
-  //target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
-  target = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  //target = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // C3 D4 E4 F4 G4 A4 B4 Octav
   targetLen = target.length;
 
   // Init population
@@ -30,11 +30,6 @@ function setup() {
   const sheetX = 100, sheetY = 180, sheetH = 8*h;
   let canvas = createCanvas(linelen * (beatsPerSheet+1), sheetH * (ceil(targetLen/beatsPerSheet) + 1));
   canvas.parent('sketch-holder');
-
-  // loadImage('./trebleClef.png', img => {
-  //   img.resize(110, 225);
-  //   image(img, -10, sheetY);
-  // });
 
   musicSheet = new Sheet(sheetX, sheetY, sheetH);
 }

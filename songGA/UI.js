@@ -16,11 +16,6 @@ class Beat {
   
     drawNote(val, color='black'){
         let noteNum = val % 12;
-
-        // 미구현
-        if(val == 36){
-            // Rest
-        }
         
         const idx = Math.floor((noteNum+1)/2); // where to put the note
         let noteX = this.x + (linelen/2), noteY = this.y + 6*h - idx*(h/2)
@@ -30,6 +25,13 @@ class Beat {
         fill(color);
         stroke(color);
         textSize(36);
+
+        // Rest
+        if(val == 36){
+            textSize(60);
+            text('𝄽', noteX, this.y + 4*h);
+            return;
+        }
 
         // Sharp
         let isSharp = false;
@@ -140,7 +142,7 @@ class Sheet {
 }
 
 
-let genHTML, targetHTML, bestHTML, infoHTML;
+let genHTML, targetHTML, bestHTML, infoHTML, allHTML;
 function textUpdate() {
     genHTML.html(`Generation : ${generation}`);
     compareHTML.html(`
@@ -150,9 +152,15 @@ function textUpdate() {
 
     infoHTML.html(`
     Average fitness : ${population.getAverageFitness()}<br>
-    Total population : ${popsize}<br>
+    Population size : ${popsize}<br>
     Mutation rate : ${floor(mutation_rate * 100)}<br>
     `);
+
+    allText = `Population size ${popsize} - sorted in decreasing order of fitness<br>`;
+    for(const song of population.parentPop){
+        allText += song.notes + "<br>";
+    }
+    allHTML.html(allText);
 }
 function sheetUpdate(){
     clear();
@@ -194,20 +202,16 @@ function textInit(X, Y){
         } 
     });
 
-    genHTML = createDiv('gen');
-    genHTML.class('gen');
-    compareHTML = createP('comp');
-    compareHTML.class('comp');
-    infoHTML = createP('info');
-    infoHTML.class('info');
+    genHTML = createDiv('gen'); genHTML.class('gen');
+    compareHTML = createP('comp'); compareHTML.class('comp');
+    infoHTML = createP('info'); infoHTML.class('info');
+    allHTML = createP('all'); allHTML.class('all');
+    allHTML.parent('all-container');
 
     genHTML.position(X, startButton.y + startButton.height + 20);
     compareHTML.position(X, genHTML.y + genHTML.height);
     infoHTML.position(X, compareHTML.y + compareHTML.height + 40);
-
-    // allPhrases = createP('All phrases:');
-    // allPhrases.position(600, 10);
-    // allPhrases.class('all');
+    //allHTML.position(1200, 10);
 
     let playTarget = createButton('play answer (target)');
     playTarget.class('play');
