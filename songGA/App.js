@@ -1,13 +1,12 @@
-let target;
+// Core variables for the main program
+let target, targetLen;
 let population;
-let targetLen;
 let isLoopRunning = false;
 
 // UI
-let targetHTML;
-let inp1, button1, inp2, button2;
 let generation = 0;
 let musicSheet;
+let img;
 
 // Hyperparameters
 let popsize = 200, mutation_rate = 0.01;
@@ -15,104 +14,36 @@ let popsize = 200, mutation_rate = 0.01;
 // Adjustable constants for Sheet
 const beatsPerSheet = 10;
 
-let osc, freq, amp;
-
 function setup() {
   noLoop();
-  
-  let span1 = createSpan('Enter population size ');
-  span1.position(20, 50);
-  inp1 = createInput();
-  inp1.position(span1.x + span1.width + 10, span1.y);
-  // button1 = createButton('submit');
-  // button1.position(inp1.x + inp1.width, inp1.y);
-  // button1.mousePressed(()=>console.log("popsize"));
 
-  let span2 = createSpan('Enter mutation rate ');
-  span2.position(span1.x, span1.y + span1.height);
-  inp2 = createInput();
-  inp2.position(inp1.x, inp1.y + inp1.height)
-  // button2 = createButton('submit2');
-  // button2.position(inp2.x + inp2.width, inp2.y);
-  // button2.mousePressed(()=>console.log("mutation_rate"));
+  textInit(20, 20);
 
-  let startButton = createButton('start');
-  startButton.position(span1.x)
-  startButton.mousePressed(()=>{
-    if(isLoopRunning){
-      startButton.html("run");
-      isLoopRunning = false;
-      noLoop();
-    }
-    else{
-      startButton.html("pause");
-      isLoopRunning = true;
-
-      if(inp1.value()) popsize = inp1.value();
-      if(inp2.value()) mutation_rate = inp2.value();
-
-      loop(); 
-    } 
-  });
-
-
-
-  bestPhrase = createP("Best phrase:");
-  //bestPhrase.position(10,10);
-  bestPhrase.class("best");
-
-  // allPhrases = createP("All phrases:");
-  // allPhrases.position(600, 10);
-  // allPhrases.class("all");
-
-  stats = createP("Stats");
-  //stats.position(10,200);
-  stats.class("stats");
-
-  target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
-  //target = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  //target = [16, 24, 2, 10, 11, 25, 36, 21, 27, 20, 6, 34, 2, 22, 14, 20, 3, 33, 28, 2, 16, 29, 36, 5, 2, 15, 22, 2, 13, 33]; // C3 D4 E4 F4 G4 A4 B4 Octav
+  target = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; // C3 D4 E4 F4 G4 A4 B4 Octav
   targetLen = target.length;
-
-  targetHTML = createP("Target:");
-  targetHTML.class("target");
 
   // Init population
   population = new Population();
-  //bestSong = new Song(targetLen);
 
   // UI for music notes
   const sheetX = 100, sheetY = 180, sheetH = 8*h;
-  createCanvas(linelen * (beatsPerSheet+1), sheetH * (ceil(targetLen/beatsPerSheet) + 1));
-  
-  // sheet = []
-  // for(let i=0; i<targetLen; i++){
-  //   sheet[i] = new Beat(i, {x: sheetX + linelen*(i%beatsPerSheet), y: sheetY + sheetH * floor(i/beatsPerSheet)});
-  // }
+  let canvas = createCanvas(linelen * (beatsPerSheet+1), sheetH * (ceil(targetLen/beatsPerSheet) + 1));
+  canvas.parent('sketch-holder');
+
+  // loadImage('./trebleClef.png', img => {
+  //   img.resize(110, 225);
+  //   image(img, -10, sheetY);
+  // });
+
   musicSheet = new Sheet(sheetX, sheetY, sheetH);
-
-  osc = new p5.Oscillator('sine');
-
-
-  let playButton = createButton('playMusic');
-  playButton.position(span1.x + 100)
-  playButton.mousePressed(()=>{
-    musicSheet.playMusic();
-  });
-  background('white');
 }
 
 function draw() {
-  // osc.freq(261.63, 0.2);
-  // osc.freq(277.18, 0.2);
-  // osc.freq(369.9944, 0.2);
-  // osc.freq(493.8833, 0.2);
-  // osc.amp(0, 0.5);
-  // osc.start();
-
   population.calPopulationFitness();
 
-  population.selectParents.roulette.call(population);
-  //population.selectParents.tournament.call(population, popsize/2);
+  //population.selectParents.roulette.call(population);
+  population.selectParents.tournament.call(population, popsize/2);
 
   population.produceOffspring();
 
@@ -122,36 +53,17 @@ function draw() {
 
   generation++;
 
-  viewUpdate();
+  textUpdate();
+  sheetUpdate();
 
-  // // Stopping condition
-  // if (population.isFinished()) {
-  //   //println(millis()/1000.0);
-  //   noLoop();
-  // }
+  // Stopping condition
+  if (isArrEqual(target, bestSong.notes)) {
+    isLoopRunning = false;
+    noLoop();
+  }
 }
 
-function viewUpdate() {
-  // Display current status of population
-  let answer = bestSong;
-  bestPhrase.html("Best phrase:<br>" + answer.notes);
-
-  targetHTML.html(target);
-
-  let statstext =
-    "total generations:     " + generation + "<br>";
-  statstext +=
-    "average fitness:       " + nf(population.getAverageFitness()) + "<br>";
-  statstext += "total population:      " + popsize + "<br>";
-  statstext += "mu tation rate:         " + floor(mutation_rate * 100) + "%";
-
-  stats.html(statstext);
-
-
-  clear();
-
-  musicSheet.display();
-  // console.log(sheet)
-  // for(const b of sheet)
-  //   b.display();
+function isArrEqual(arr1, arr2){
+  if(arr1.length != arr2.length) return false;
+  return arr1.every((elem, idx)=>elem === arr2[idx]);
 }

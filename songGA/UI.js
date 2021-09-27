@@ -63,13 +63,13 @@ class Beat {
             line(noteX - noteWidth + 8, noteY, noteX + noteWidth - 8, noteY); // for note 'C'
     }
 
-    play(sheetH){
+    play(sheetH, playTarget = true){
         stroke('black');
         fill(0, 0, 0, 0);
         rect(this.x, this.y, linelen, sheetH);
         
-        const note = target[this.nth];
-        osc = new p5.Oscillator('sine');
+        const note = playTarget ? target[this.nth] : bestSong.notes[this.nth];
+        let osc = new p5.Oscillator('sine');
         osc.freq(FREQ[note], 0.2);
         osc.amp(0, 0.5);
         osc.start();
@@ -115,15 +115,15 @@ class Sheet {
             b.display();
     }
 
-    playMusic(){
+    playMusic(playTarget = true){
         isLoopRunning = false;
         noLoop();
 
         let time = 1;
         for(const b of this.sheet){
             setTimeout(()=>{
-                b.play.call(b, this.sheetH);
-                setTimeout(viewUpdate, 300); // delay view reset
+                b.play.call(b, this.sheetH, playTarget);
+                setTimeout(sheetUpdate, 300); // delay view reset
             }, 500*time++);
         }
         // 📝 Further work) Allow only one 'playMusic' execution
@@ -133,6 +133,93 @@ class Sheet {
         End cond는 idx > N 일때 혹은 playing == false 일때
        
         이러면 각 beat마다 테두리 표시 못해줌 + 
+
+        > stop music 기능에 활용!
         */
     }
+}
+
+
+let genHTML, targetHTML, bestHTML, infoHTML;
+function textUpdate() {
+    genHTML.html(`Generation : ${generation}`);
+    compareHTML.html(`
+         Target     : ${target}<br>
+    Best individual : ${bestSong.notes}<br>
+    `)
+
+    infoHTML.html(`
+    Average fitness : ${population.getAverageFitness()}<br>
+    Total population : ${popsize}<br>
+    Mutation rate : ${floor(mutation_rate * 100)}<br>
+    `);
+}
+function sheetUpdate(){
+    clear();
+    musicSheet.display();
+}
+  
+function textInit(X, Y){
+    let span1 = createSpan('Enter population size ');
+    span1.position(X, Y);
+    inp1 = createInput();
+    inp1.position(X + span1.width + 10, Y);
+
+    let span2 = createSpan('Enter mutation rate ');
+    span2.position(X, Y + span1.height);
+    inp2 = createInput();
+    inp2.position(inp1.x, inp1.y + inp1.height)
+    // button2 = createButton('submit2');
+    // button2.position(inp2.x + inp2.width, inp2.y);
+    // button2.mousePressed(()=>console.log("mutation_rate"));
+
+    // -- Add additional options --
+
+    let startButton = createButton('start');
+    startButton.position(X, 100);
+    startButton.mousePressed(()=>{
+        if(isLoopRunning){
+            startButton.html("run");
+            isLoopRunning = false;
+            noLoop();
+        }
+        else{
+            startButton.html("pause");
+            isLoopRunning = true;
+
+            if(inp1.value()) popsize = inp1.value();
+            if(inp2.value()) mutation_rate = inp2.value();
+
+            loop(); 
+        } 
+    });
+
+    genHTML = createDiv('gen');
+    genHTML.class('gen');
+    compareHTML = createP('comp');
+    compareHTML.class('comp');
+    infoHTML = createP('info');
+    infoHTML.class('info');
+
+    genHTML.position(X, startButton.y + startButton.height + 20);
+    compareHTML.position(X, genHTML.y + genHTML.height);
+    infoHTML.position(X, compareHTML.y + compareHTML.height + 40);
+
+    // allPhrases = createP('All phrases:');
+    // allPhrases.position(600, 10);
+    // allPhrases.class('all');
+
+    let playTarget = createButton('play answer (target)');
+    playTarget.class('play');
+    playTarget.position(X, infoHTML.y + infoHTML.height + 100)
+    playTarget.mousePressed(()=>{
+      musicSheet.playMusic(true);
+    });
+
+    let playBest = createButton('play best individual');
+    playBest.class('play');
+    playBest.position(playTarget.x + playTarget.width + 10, playTarget.y);
+    playBest.mousePressed(()=>{
+      musicSheet.playMusic(false);
+    });
 }

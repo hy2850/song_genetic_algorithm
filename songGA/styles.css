@@ -1,0 +1,25 @@
+body {
+  background: white;
+}
+
+.stats,
+.all,
+.best {
+  font-family: "Courier";
+}
+
+.stats {
+  font-size: 24px;
+}
+
+#sketch-holder {
+  position: relative;
+  top: 250px;
+}
+
+img {
+  width: 110px;
+  height: 225px;
+  position: absolute;
+  top: 450px;
+}
