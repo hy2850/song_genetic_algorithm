@@ -63,6 +63,8 @@ class Beat {
 
         if (noteNum == 0)
             line(noteX - noteWidth + 8, noteY, noteX + noteWidth - 8, noteY); // for note 'C'
+
+        stroke('black');
     }
 
     play(sheetH, playTarget = true){
@@ -141,27 +143,43 @@ class Sheet {
     }
 }
 
+// Helper for formatting array into string
+// [1, 2, 30, 4] ->  1  2 30  4
+function arrayToString(arr){
+    let ret = "";
+    for(const num of arr){
+        let s = num.toString();
+        if (s.length < 2)
+            s = "&nbsp" + s;
+        ret += s + "&nbsp";
+    }
+    return ret;
+}
 
-let genHTML, targetHTML, bestHTML, infoHTML, allHTML;
+let genHTML, targetHTML, bestHTML, infoHTML, allTitle, allBody;
 function textUpdate() {
     genHTML.html(`Generation : ${generation}`);
     compareHTML.html(`
-         Target     : ${target}<br>
-    Best individual : ${bestSong.notes}<br>
+    &emsp;&emsp;&emsp;&emsp;Target     : ${arrayToString(target)}<br>
+    Best individual : ${arrayToString(bestSong.notes)}<br>
     `)
 
     infoHTML.html(`
     Average fitness : ${population.getAverageFitness()}<br>
     Population size : ${popsize}<br>
-    Mutation rate : ${floor(mutation_rate * 100)}<br>
+    Mutation rate : ${floor(mutation_rate * 100)}%<br>
     `);
 
-    allText = `Population size ${popsize} - sorted in decreasing order of fitness<br>`;
+    let allTitleTxt = `Population size ${popsize} - sorted in decreasing order of fitness<br>`;  
+    allTitle.html(allTitleTxt);
+    
+    let allBodyTxt = "";
     for(const song of population.parentPop){
-        allText += song.notes + "<br>";
+        allBodyTxt += song.notes + "<br>";
     }
-    allHTML.html(allText);
+    allBody.html(allBodyTxt);
 }
+
 function sheetUpdate(){
     clear();
     musicSheet.display();
@@ -183,11 +201,12 @@ function textInit(X, Y){
 
     // -- Add additional options --
 
-    let startButton = createButton('start');
+    let startButton = createButton('start simulation');
+    startButton.class('start');
     startButton.position(X, 100);
     startButton.mousePressed(()=>{
         if(isLoopRunning){
-            startButton.html("run");
+            startButton.html("resume");
             isLoopRunning = false;
             noLoop();
         }
@@ -205,12 +224,13 @@ function textInit(X, Y){
     genHTML = createDiv('gen'); genHTML.class('gen');
     compareHTML = createP('comp'); compareHTML.class('comp');
     infoHTML = createP('info'); infoHTML.class('info');
-    allHTML = createP('all'); allHTML.class('all');
-    allHTML.parent('all-container');
+    allTitle = createP('all'); allTitle.class('all-title');
+    allBody = createP('allBody'); allBody.class('all-body');
+    allTitle.parent('all-container'); allBody.parent('all-container');
 
     genHTML.position(X, startButton.y + startButton.height + 20);
-    compareHTML.position(X, genHTML.y + genHTML.height);
-    infoHTML.position(X, compareHTML.y + compareHTML.height + 40);
+    compareHTML.position(X, genHTML.y + genHTML.height + 30);
+    infoHTML.position(X, compareHTML.y + compareHTML.height + 80);
     //allHTML.position(1200, 10);
 
     let playTarget = createButton('play answer (target)');
