@@ -188,38 +188,68 @@ function sheetUpdate(){
 function textInit(X, Y){
     let span1 = createSpan('Enter population size ');
     span1.position(X, Y);
-    inp1 = createInput();
-    inp1.position(X + span1.width + 10, Y);
+    popSizeInp = createInput();
+    popSizeInp.position(X + span1.width + 50, Y);
 
     let span2 = createSpan('Enter mutation rate ');
     span2.position(X, Y + span1.height);
-    inp2 = createInput();
-    inp2.position(inp1.x, inp1.y + inp1.height)
-    // button2 = createButton('submit2');
-    // button2.position(inp2.x + inp2.width, inp2.y);
-    // button2.mousePressed(()=>console.log("mutation_rate"));
+    mutRateInp = createInput();
+    mutRateInp.position(popSizeInp.x, span2.y)
 
     // -- Add additional options --
 
+    let span3 = createSpan('Choose fitness metric ');
+    span3.position(X, span2.y + span2.height + 20);
+    fitSel = createSelect();
+    fitSel.class('sel'); fitSel.id('fitSel');
+    fitSel.option('count correct');
+    fitSel.option('distance - absolute');
+    fitSel.option('distance - RMSE');
+    fitSel.selected('count correct');
+    fitSel.position(popSizeInp.x, span3.y);
+    
+    let span4 = createSpan('Parent selection method ');
+    span4.position(X, span3.y + span3.height);
+    selSel = createSelect();
+    selSel.class('sel'); selSel.id('selSel');
+    selSel.option('Roulette');
+    selSel.option('Tournament');
+    selSel.selected('Roulette');
+    selSel.position(popSizeInp.x, fitSel.y + fitSel.height + 3);
+
+    let span5 = createSpan('Cross-over ');
+    span5.position(X, span4.y + span4.height);
+    crossSel = createSelect();
+    crossSel.class('sel'); crossSel.id('crossSel');
+    crossSel.option('singlePoint');
+    crossSel.option('uniform');
+    crossSel.option('average');
+    crossSel.selected('singlePoint');
+    crossSel.position(popSizeInp.x, selSel.y + selSel.height + 3);
+
+    let span6 = createSpan('Mutation ');
+    span6.position(X, span5.y + span5.height);
+    mutSel = createSelect();
+    mutSel.class('sel'); mutSel.id('mutSel');
+    mutSel.option('randomFlip');
+    mutSel.option('addVal');
+    mutSel.selected('randomFlip');
+    mutSel.position(popSizeInp.x, crossSel.y + crossSel.height + 3);
+    
+    let span7 = createSpan('Next generation selection ');
+    span7.position(X, span6.y + span6.height);
+    genSel = createSelect();
+    genSel.class('sel'); genSel.id('genSel');
+    genSel.option('total replacement');
+    genSel.option('gradual replacement');
+    genSel.option('elitism');
+    genSel.selected('total replacement');
+    genSel.position(popSizeInp.x, mutSel.y + mutSel.height + 3);
+
+
     let startButton = createButton('start simulation');
     startButton.class('start');
-    startButton.position(X, 100);
-    startButton.mousePressed(()=>{
-        if(isLoopRunning){
-            startButton.html("resume");
-            isLoopRunning = false;
-            noLoop();
-        }
-        else{
-            startButton.html("pause");
-            isLoopRunning = true;
-
-            if(inp1.value()) popsize = inp1.value();
-            if(inp2.value()) mutation_rate = inp2.value();
-
-            loop(); 
-        } 
-    });
+    startButton.position(X, genSel.y + genSel.height + 10);
 
     genHTML = createDiv('gen'); genHTML.class('gen');
     compareHTML = createP('comp'); compareHTML.class('comp');
@@ -246,4 +276,11 @@ function textInit(X, Y){
     playBest.mousePressed(()=>{
       musicSheet.playMusic(false);
     });
+
+    return {
+        startButton: startButton,
+        popSizeInp: popSizeInp,
+        mutRateInp: mutRateInp,
+        fitSel:fitSel
+    };
 }

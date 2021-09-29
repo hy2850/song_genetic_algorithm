@@ -51,7 +51,6 @@ class Song {
         break;
       case 2:
         this.distanceRMSE();
-        break;
     }
   }
 }
@@ -88,6 +87,7 @@ crossover = {
       if(random() < 0.5) offspring.notes[i] = song1.notes[i];
       else offspring.notes[i] = song2.notes[i];
     }
+    return offspring;
   },
   // Take arithmetic average
   average : function(song1, song2){
@@ -97,6 +97,7 @@ crossover = {
     for (let i = 0; i < N; i++) {
       offspring.notes[i] = floor((song1.notes[i] + song2.notes[i])/2);
     }
+    return offspring;
   },
 }
 

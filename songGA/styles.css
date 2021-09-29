@@ -23,14 +23,14 @@
 /* UI - index.html styles */
 #sketch-holder {
   position: relative;
-  top: 350px;
+  top: 450px;
 }
 
 img {
   width: 110px;
   height: 225px;
   position: absolute;
-  top: 550px;
+  top: 650px;
 }
 
 #all-container {
@@ -40,4 +40,8 @@ img {
 }
 #all-container summary {
   font-size: 36px;
+}
+
+.sel {
+  height: 20px;
 }
