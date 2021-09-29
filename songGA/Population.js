@@ -48,7 +48,6 @@ class Population {
     for (let i = 0; i < this.parentPop.length; i++) {
       let song = this.parentPop[i];
       song.calFitness();
-
       this.#fitsum += song.fitness;
     }
     this.parentPop.sort(compareFitnessInc);
@@ -98,7 +97,7 @@ class Population {
 
       let child = crossover.singlePoint(parent1, parent2);
 
-      mutation.singleFlip(child);
+      mutation.randomFlip(child);
       
       child.calFitness();
       this.childPop[i] = child;
@@ -106,17 +105,29 @@ class Population {
   }
 
   // Step 4. With parent and offspring population, get next generation population
-  formNextGeneration(){
+  formNextGeneration = {
     // Gradual replacement
-    let replaceCnt = this.parentPop.length; //floor(this.parentPop.length / 2);
-    this.childPop.sort(compareFitnessDec);
+    // if replaceCnt == this.parentPop.length, whole parent population will be replaced with offspring population
+    gradual_replacement: function(replaceCnt = this.parentPop.length){  
+      // let replaceCnt = this.parentPop.length; //floor(this.parentPop.length / 2);
+      this.childPop.sort(compareFitnessDec);
 
-    // Replace 'replaceCnt' individuals with lowest fitness from parent with same amount of best offsprings
-    for (let i = 0; i < replaceCnt; i++) {
-    //for (let i = 0; i < popsize; i++) {
-      this.parentPop[i] = this.childPop[i];
+      // Replace 'replaceCnt' individuals with lowest fitness from parent with same amount of best offsprings
+      for (let i = 0; i < replaceCnt; i++) {
+        this.parentPop[i] = this.childPop[i];
+      }
+    },
+
+    // Elitism
+    // Keep 'keepCnt' best individuals from the parent population
+    elitism: function(keepCnt){
+      const N = this.parentPop.length;
+      for(let i = keepCnt; i < N; i++){
+        this.parentPop[i] = random(this.childPop); // randomly select offspring for the rest of the population
+      }
     }
   }
+
 
   // Find individual with best fitness
   findBest() {

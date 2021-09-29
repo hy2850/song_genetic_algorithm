@@ -42,8 +42,10 @@ function draw() {
 
   population.produceOffspring();
 
-  population.formNextGeneration();
-
+  population.formNextGeneration.gradual_replacement.call(population, popsize);
+  //population.formNextGeneration.gradual_replacement.call(population, popsize/2);
+  //population.formNextGeneration.elitism.call(population, popsize/5);
+  
   population.findBest();
 
   generation++;
@@ -57,6 +59,8 @@ function draw() {
     noLoop();
     alert('Simulation over - reload page to try again');
   }
+
+  //document.getElementById("start").click(); 
 }
 
 function isArrEqual(arr1, arr2){
