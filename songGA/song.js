@@ -1,5 +1,7 @@
 const REST = 36;
 const INF = 1e9;
+const NOTE = 0;
+const SPD = 1;
 
 class Song {
   constructor() {
@@ -14,10 +16,11 @@ class Song {
   }
 
   // Fitness calculation method
+  // Count matching notes (also with same spd)
   correctCount(){
     let match = 0;
     for (let i = 0; i < this.N; i++) {
-      if (this.notes[i] == target[i]) {
+      if (this.notes[i][SPD] == target[i][SPD] && this.notes[i][NOTE] == target[i][NOTE]) {
         match++;
       }
     }
@@ -28,7 +31,7 @@ class Song {
   distanceAbs(){
     let dist = 0;
     for (let i = 0; i < this.N; i++) {
-      dist += abs(target[i] - this.notes[i]);
+      dist += abs(target[i][NOTE] - this.notes[i][NOTE]) + (this.notes[i][SPD] != target[i][SPD] ? 40 : 0);
     }
     this.fitness = dist;
   }
@@ -36,7 +39,7 @@ class Song {
   distanceRMSE(){
     let dist = 0;
     for (let i = 0; i < this.N; i++) {
-      dist += sq(target[i] - this.notes[i]);
+      dist += sq((target[i][NOTE] - this.notes[i][NOTE]) + (this.notes[i][SPD] != target[i][SPD] ? 40 : 0));
     }
     this.fitness = sqrt(dist / this.N)
   }
@@ -60,7 +63,7 @@ class Song {
 // 36 : rest
 // 37 : continue previous note (testing)
 function newNote() {
-  return floor(random(0,38));
+  return [floor(random(0,37)), floor(random(0,2))];
 }
 
 // Crossover options
@@ -95,7 +98,8 @@ crossover = {
     let offspring = new Song(N);
 
     for (let i = 0; i < N; i++) {
-      offspring.notes[i] = floor((song1.notes[i] + song2.notes[i])/2);
+      offspring.notes[i][NOTE] = floor((song1.notes[i][NOTE] + song2.notes[i][NOTE])/2);
+      offspring.notes[i][SPD] = song1.notes[i][SPD] == song2.notes[i][SPD] ? 1 : 0;
     }
     return offspring;
   },
@@ -115,7 +119,8 @@ mutation = {
   addVal : function(song, weight = 1) {
     for (let i = 0; i < song.notes.length; i++) {
       if (random() <= mutation_rate) {
-        song.notes[i] += random([-1, 1]) * weight;
+        song.notes[i][NOTE] += random([-1, 1]) * weight;
+        song.notes[i][SPD] = floor(random(0, 2));
       }
     }
   }

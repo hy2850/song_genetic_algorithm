@@ -14,7 +14,7 @@ class Beat {
       this.y = pos.y;
     }
   
-    drawNote(val, color='black'){
+    drawNote(val, spd, color='black'){
         let noteNum = val % 12;
         
         const idx = Math.floor((noteNum+1)/2); // where to put the note
@@ -24,7 +24,6 @@ class Beat {
 
         fill(color);
         stroke(color);
-        textSize(36);
 
         // Rest
         if(val == 36){
@@ -34,14 +33,15 @@ class Beat {
         }
 
         // Sharp
-        let isSharp = false;
         const SHARP = [1, 3, 6, 8, 10];
         if(SHARP.includes(noteNum)){
             noteNum--;
-            text('#', noteX - noteWidth, noteY + 10);
+            textSize(50);
+            text('♯', noteX - noteWidth + 5, noteY + 5);
         }
 
         // Octave - indicated by the arrow on the top of the beat
+        textSize(36);
         switch(floor(val/12)){
             case 0:
                 text('↓', noteX - r + (color === 'red' ? 10 : 0), this.y);
@@ -52,17 +52,22 @@ class Beat {
                 break
         }
 
-        angleMode(DEGREES);
-        translate(noteX, noteY);
-        rotate(-10);
+        textSize(120);
+        if(spd == 0)
+            text('𝅘𝅥𝅮', noteX-20, noteY+10);
+        else{
+            angleMode(DEGREES);
+            translate(noteX, noteY);
+            rotate(-10);
 
-        ellipse(0, 0, noteWidth, noteHeight);
+            ellipse(0, 0, noteWidth, noteHeight);
 
-        rotate(10);
-        translate(-noteX, -noteY);
+            rotate(10);
+            translate(-noteX, -noteY);
+        }
 
         if (noteNum == 0)
-            line(noteX - noteWidth + 8, noteY, noteX + noteWidth - 8, noteY); // for note 'C'
+            line(noteX + (spd ? -noteWidth+8 : -20), noteY, noteX  + (spd ? noteWidth-8 : 20), noteY); // for note 'C'
 
         stroke('black');
     }
@@ -72,13 +77,14 @@ class Beat {
         fill(0, 0, 0, 0);
         rect(this.x, this.y, linelen, sheetH);
         
-        const note = playTarget ? target[this.nth] : bestSong.notes[this.nth];
+        const note = playTarget ? target[this.nth][NOTE] : bestSong.notes[this.nth][NOTE];
+        const spd = playTarget ? target[this.nth][SPD] : bestSong.notes[this.nth][SPD];
 
-        if(note == REST) return; // rest
+        if(note == REST) return;
 
         let osc = new p5.Oscillator('sine');
         osc.freq(FREQ[note], 0.2);
-        osc.amp(0, 0.5);
+        osc.amp(0, 0.5*(spd+1)); // control note length
         osc.start();
     }
 
@@ -89,21 +95,23 @@ class Beat {
             line(this.x, y, this.x + linelen, y);
         }
         
-        const ans = target[this.nth];
+        const ans = target[this.nth][NOTE];
+        const spd = target[this.nth][SPD];
         let drawTargetBlack = true; 
         if(bestSong) {
-            const best = bestSong.notes[this.nth];
+            const best = bestSong.notes[this.nth][NOTE];
+            const bestSpd = bestSong.notes[this.nth][SPD];
 
             // Matching note
-            if (ans === best){
-                this.drawNote(target[this.nth], 'blue');
+            if (ans === best && spd === bestSpd){
+                this.drawNote(ans, spd, 'blue');
                 drawTargetBlack = false;
             }
             else
-                this.drawNote(bestSong.notes[this.nth], 'red');
+                this.drawNote(best, bestSpd, 'red');
         }
         if(drawTargetBlack)
-            this.drawNote(target[this.nth], 'black');
+            this.drawNote(ans, spd, 'black');
     }
 }
 
@@ -125,12 +133,17 @@ class Sheet {
         isLoopRunning = false;
         noLoop();
 
-        let time = 1;
+        let spd;
+        let time = 0;
         for(const b of this.sheet){
+            spd = playTarget ? target[b.nth][SPD] : bestSong.notes[b.nth][SPD];
+
             setTimeout(()=>{
                 b.play.call(b, this.sheetH, playTarget);
-                setTimeout(sheetUpdate, 300); // delay view reset
-            }, 500*time++);
+                setTimeout(sheetUpdate, 300*(spd+1)); // delay view reset
+            }, time);
+
+            time += 500 + 500*spd;
         }
     }
 }
@@ -152,8 +165,8 @@ let genHTML, targetHTML, bestHTML, infoHTML, allTitle, allBody;
 function textUpdate() {
     genHTML.html(`Generation : ${generation}`);
     compareHTML.html(`
-    &emsp;&emsp;&emsp;&emsp;Target     : ${arrayToString(target)}<br>
-    Best individual : ${arrayToString(bestSong.notes)}<br>
+    &emsp;&emsp;&emsp;&emsp;Target     : ${arrayToString(target.map(tup=>tup[NOTE]))}<br>
+    Best individual : ${arrayToString(bestSong.notes.map(tup=>tup[NOTE]))}<br>
     `)
 
     infoHTML.html(`
@@ -167,7 +180,7 @@ function textUpdate() {
     
     let allBodyTxt = "";
     for(const song of population.parentPop){
-        allBodyTxt += song.notes + "<br>";
+        allBodyTxt += song.notes.map(tup=>tup[0]) + "<br>";
     }
     allBody.html(allBodyTxt);
 
@@ -185,7 +198,7 @@ function textInit(X, Y){
     popSizeInp = createInput();
     popSizeInp.position(X + span1.width + 50, Y);
 
-    let span2 = createSpan('Enter mutation rate ');
+    let span2 = createSpan('Enter mutation rate (%) ');
     span2.position(X, Y + span1.height);
     mutRateInp = createInput();
     mutRateInp.position(popSizeInp.x, span2.y)
