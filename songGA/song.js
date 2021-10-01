@@ -37,11 +37,12 @@ class Song {
   }
 
   distanceRMSE(){
-    let dist = 0;
+    let note_dist = 0, spd_dist = 0;
     for (let i = 0; i < this.N; i++) {
-      dist += sq((target[i][NOTE] - this.notes[i][NOTE]) + (this.notes[i][SPD] != target[i][SPD] ? 40 : 0));
+      note_dist += sq(target[i][NOTE] - this.notes[i][NOTE]);
+      spd_dist += sq((this.notes[i][SPD] - target[i][SPD]) * 40);
     }
-    this.fitness = sqrt(dist / this.N)
+    this.fitness = sqrt(note_dist / this.N) + sqrt(spd_dist / this.N)
   }
 
   calFitness(choice=0){
@@ -63,7 +64,7 @@ class Song {
 // 36 : rest
 // 37 : continue previous note (testing)
 function newNote() {
-  return [floor(random(0,37)), floor(random(0,2))];
+  return [floor(random(0,37)), floor(random(0,3))];
 }
 
 // Crossover options
@@ -99,7 +100,8 @@ crossover = {
 
     for (let i = 0; i < N; i++) {
       offspring.notes[i][NOTE] = floor((song1.notes[i][NOTE] + song2.notes[i][NOTE])/2);
-      offspring.notes[i][SPD] = song1.notes[i][SPD] == song2.notes[i][SPD] ? 1 : 0;
+      offspring.notes[i][SPD] = floor((song1.notes[i][SPD] + song2.notes[i][SPD])/2);
+      //offspring.notes[i][SPD] = song1.notes[i][SPD] == song2.notes[i][SPD] ? 3 : floor((song1.notes[i][SPD] + song2.notes[i][SPD])/2);
     }
     return offspring;
   },
@@ -120,7 +122,7 @@ mutation = {
     for (let i = 0; i < song.notes.length; i++) {
       if (random() <= mutation_rate) {
         song.notes[i][NOTE] += random([-1, 1]) * weight;
-        song.notes[i][SPD] = floor(random(0, 2));
+        song.notes[i][SPD] = floor(random(0, 3));
       }
     }
   }

@@ -53,8 +53,8 @@ class Beat {
         }
 
         textSize(120);
-        if(spd == 0)
-            text('𝅘𝅥𝅮', noteX-20, noteY+10);
+        if(spd < 2)
+            text(spd == 1 ? '𝅘𝅥𝅮' : '𝅘𝅥𝅯', noteX-20, noteY+10);
         else{
             angleMode(DEGREES);
             translate(noteX, noteY);
@@ -84,7 +84,7 @@ class Beat {
 
         let osc = new p5.Oscillator('sine');
         osc.freq(FREQ[note], 0.2);
-        osc.amp(0, 0.5*(spd+1)); // control note length
+        osc.amp(0, spd == 0 ? 0.25 : 0.5*spd); // control note length
         osc.start();
     }
 
@@ -140,10 +140,10 @@ class Sheet {
 
             setTimeout(()=>{
                 b.play.call(b, this.sheetH, playTarget);
-                setTimeout(sheetUpdate, 300*(spd+1)); // delay view reset
+                setTimeout(sheetUpdate, spd == 0 ? 100 : 300*spd); // delay view reset
             }, time);
 
-            time += 500 + 500*spd;
+            time += spd == 0 ? 250 : 500*spd;
         }
     }
 }
@@ -250,7 +250,7 @@ function textInit(X, Y){
     genSel.option('total replacement');
     genSel.option('gradual replacement');
     genSel.option('elitism');
-    genSel.selected('total replacement');
+    genSel.selected('gradual replacement');
     genSel.position(popSizeInp.x, mutSel.y + mutSel.height + 3);
 
     let span8 = createSpan('Select target song ');
