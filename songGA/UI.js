@@ -73,12 +73,14 @@ class Beat {
         rect(this.x, this.y, linelen, sheetH);
         
         const note = playTarget ? target[this.nth] : bestSong.notes[this.nth];
+
+        if(note == REST) return; // rest
+
         let osc = new p5.Oscillator('sine');
         osc.freq(FREQ[note], 0.2);
         osc.amp(0, 0.5);
         osc.start();
     }
-
 
     display() {    
         console.log("Hey")
@@ -109,7 +111,7 @@ class Sheet {
     constructor(sheetX, sheetY, sheetH){
         this.sheet = []       
         this.sheetH = sheetH; 
-        for(let i=0; i<targetLen; i++){
+        for(let i=0; i<target.length; i++){
             this.sheet[i] = new Beat(i, {x: sheetX + linelen*(i%beatsPerSheet), y: sheetY + sheetH * floor(i/beatsPerSheet)});
         }
     }
@@ -130,16 +132,6 @@ class Sheet {
                 setTimeout(sheetUpdate, 300); // delay view reset
             }, 500*time++);
         }
-        // 📝 Further work) Allow only one 'playMusic' execution
-        /* 
-        playMusic 시, playing = true로 두고,
-        play(idx)를 재귀로 구현해서 setTimeout으로 시간 차 두고 play(idx+1) 호출.
-        End cond는 idx > N 일때 혹은 playing == false 일때
-       
-        이러면 각 beat마다 테두리 표시 못해줌 + 
-
-        > stop music 기능에 활용!
-        */
     }
 }
 
@@ -165,9 +157,9 @@ function textUpdate() {
     `)
 
     infoHTML.html(`
-    Average fitness : ${population.getAverageFitness()}<br>
     Population size : ${popsize}<br>
     Mutation rate : ${floor(mutation_rate * 100)}%<br>
+    Average fitness : ${population.getAverageFitness()}<br>
     `);
 
     let allTitleTxt = `Population size ${popsize} - sorted in decreasing order of fitness<br>`;  
@@ -178,6 +170,8 @@ function textUpdate() {
         allBodyTxt += song.notes + "<br>";
     }
     allBody.html(allBodyTxt);
+
+    slowMode = document.querySelector('.slow input[type="checkbox"]').checked;
 }
 
 function sheetUpdate(){
@@ -246,10 +240,23 @@ function textInit(X, Y){
     genSel.selected('total replacement');
     genSel.position(popSizeInp.x, mutSel.y + mutSel.height + 3);
 
+    let span8 = createSpan('Select target song ');
+    span8.position(X, span7.y + span7.height + 20);
+    songSel = createSelect();
+    songSel.class('sel'); songSel.id('songSel');
+    songSel.option('C Major scale');
+    songSel.option('Melody without speed diff');
+    songSel.option('Chopin Nocturne Op.9 No.2 - Melody with speed diff');
+    songSel.position(popSizeInp.x, genSel.y + genSel.height + 20);
+
 
     let startButton = createButton('start simulation');
     startButton.class('start');
-    startButton.position(X, genSel.y + genSel.height + 10);
+    startButton.position(X, songSel.y + songSel.height + 10);
+
+    let slowModeCheckbox = createCheckbox('Stop at every loop');
+    slowModeCheckbox.class('slow');
+    slowModeCheckbox.position(startButton.x + startButton.width + 10, startButton.y);
 
     genHTML = createDiv('gen'); genHTML.class('gen');
     compareHTML = createP('comp'); compareHTML.class('comp');
@@ -261,7 +268,7 @@ function textInit(X, Y){
     genHTML.position(X, startButton.y + startButton.height + 20);
     compareHTML.position(X, genHTML.y + genHTML.height + 30);
     infoHTML.position(X, compareHTML.y + compareHTML.height + 80);
-    //allHTML.position(1200, 10);
+
 
     let playTarget = createButton('play answer (target)');
     playTarget.class('play');
@@ -281,6 +288,5 @@ function textInit(X, Y){
         startButton: startButton,
         popSizeInp: popSizeInp,
         mutRateInp: mutRateInp,
-        fitSel:fitSel
     };
 }

@@ -19,27 +19,21 @@ const compareFitnessDec = (s1, s2) => {
     return -1;
 }
 
-let bestSong;
-
 class Population {
   // Private
   #fitsum
 
   constructor() {
-    this.parentPop = []; // Main population
+    this.parentPop = []; // Main population - invariant : always sorted, best indiv on the front
     this.matingPool = [];
     this.childPop = []; // Child population for step 3 - 'produceOffspring'
 
-
-    //this.tournamentK = 2;
     this.#fitsum = 0;
 
     // Init parentPop with new random individuals
     for (let i = 0; i < popsize; i++) {
       this.parentPop[i] = new Song(target);
     }
-
-    //this.calculateFitness();
   }
 
   // Step 1. Calculate fitness of each individual (Song) in the population
@@ -51,6 +45,7 @@ class Population {
       this.#fitsum += song.fitness;
     }
 
+    // parentPop Invariant
     if (minFitness) this.parentPop.sort(compareFitnessDec);
     else this.parentPop.sort(compareFitnessInc);
   }
@@ -91,9 +86,6 @@ class Population {
           else
             return prev.fitness < cur.fitness ? cur : prev;
         })
-
-        // tmp.sort(compareFitnessDec);
-        // this.matingPool[i] = tmp[0];
       }
     }
   }
@@ -136,7 +128,6 @@ class Population {
     // Gradual replacement
     // if replaceCnt == this.parentPop.length, whole parent population will be replaced with offspring population
     gradual_replacement: function (replaceCnt = this.parentPop.length) {
-      // let replaceCnt = this.parentPop.length; //floor(this.parentPop.length / 2);
       if (minFitness) this.childPop.sort(compareFitnessInc);
       else this.childPop.sort(compareFitnessDec);
 
@@ -165,13 +156,11 @@ class Population {
 
   // Calculate average fitness of the whole population
   getAverageFitness() {
-    // const N = this.parentPop.length;
-    // return this.parentPop.map(s=>s.fitness)
-    //                      .reduce((prev, cur)=>prev+cur) / N;
     return this.#fitsum / popsize;
   }
 }
 
+// Used in roulette selection
 function mapFitnessToProb(fit, fitsum) {
   return map(fit, 0, fitsum, 0, 1)
 }

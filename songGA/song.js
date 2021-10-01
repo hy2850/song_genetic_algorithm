@@ -1,4 +1,4 @@
-const REST = 37;
+const REST = 36;
 const INF = 1e9;
 
 class Song {
@@ -22,7 +22,7 @@ class Song {
       }
     }
     // this.fitness = match / target.length;
-    this.fitness = pow(match / target.length, 2);
+    this.fitness = pow(match / target.length, 2); // emphasize the correct count
   }
 
   distanceAbs(){
