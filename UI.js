@@ -89,7 +89,6 @@ class Beat {
     }
 
     display() {    
-        console.log("Hey")
         for(let i = 1; i <= 5; i++){
             let y = this.y + h * i;
             line(this.x, y, this.x + linelen, y);
@@ -115,6 +114,7 @@ class Beat {
     }
 }
 
+
 class Sheet {
     constructor(sheetX, sheetY, sheetH){
         this.sheet = []       
@@ -129,21 +129,26 @@ class Sheet {
             b.display();
     }
 
-    playMusic(playTarget = true){
+    wait(ticks){
+        return new Promise((resolve, reject)=>{
+            setTimeout(()=>{
+                resolve("done");
+                //console.log(`Waited ${ticks}`)
+            }, ticks);
+        }); 
+    }
+
+    async playMusic(playTarget = true){
         isLoopRunning = false;
         noLoop();
 
         let spd;
-        let time = 0;
         for(const b of this.sheet){
             spd = playTarget ? target[b.nth][SPD] : bestSong.notes[b.nth][SPD];
 
-            setTimeout(()=>{
-                b.play.call(b, this.sheetH, playTarget);
-                setTimeout(sheetUpdate, spd == 0 ? 100 : 300*spd); // delay view reset
-            }, time);
-
-            time += spd == 0 ? 250 : 500*spd;
+            b.play.call(b, this.sheetH, playTarget);
+            setTimeout(sheetUpdate, spd == 0 ? 100 : 300*spd);
+            await this.wait(spd == 0 ? 250 : 500*spd);
         }
     }
 }
