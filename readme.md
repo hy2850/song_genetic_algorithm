@@ -1,43 +1,52 @@
 # Song GA
-## Find target song with Genetic Algorithm
+
+### Find target song with Genetic Algorithm
 
 Genetic algorithm simulator made with p5.js and p5.sound.js
 
-![readme-overview](.\img\readme-overview.jpg)
+![readme-overview](img/readme-overview.jpg)
 
 
 
 Starting from random notes (represented by numbers), find target song out of gazillion possible combinations of notes.
 
-![readme-overview](.\img\readme-sheet.jpg)
+![readme-overview](img/readme-sheet.jpg)
 *Black note : target / red : initial random note / blue : match (after genetic algorithm runs)*
 
-![readme-simualte](img\readme-simualte.gif)
+![readme-simualte](img/readme-simualte.gif)
 
 
 
 Play the notes whenever you want (play answer / play best individual button)
 
-![readme-simualte](img\readme-play.gif)
+![readme-simualte](img/readme-play.gif)
 
 
 
 Test multiple options for genetic algorithm
 
 * Fitness 
+
 * Parent selection
+
 * Cross-over
+
 * Mutation
+
 * Next generation selection
+
+  
 
 Including **Tournament selection (parent selection)**  and **Gradual replacement (next generation selection)** yields good result.
 
 * Best combination so far : Count Fitness + Tournament selection (parent selection) + Total replacement (next generation selection)
   (Rest of the options are negligible)
 
-  
 
----
+
+
+
+
 ### How to use it
 
 Program settings (hyperparameters) – being set only at the first start (not between pause and resumes)
@@ -48,7 +57,7 @@ Program settings (hyperparameters) – being set only at the first start (not be
 
 Info (current average fitness of the population, whole population) is easily visible.
 
-![info](img\readme-howto-info.jpg)
+![info](img/readme-howto-info.jpg)
 
 
 
@@ -64,8 +73,6 @@ When two matches, the color turns blue.
 
 
 
-
----
 
 ### Program Structure
 ```markdown
@@ -104,7 +111,7 @@ src
 
 
 
----
+
 
 ### Representation
 
@@ -123,9 +130,7 @@ function newNote() {
 
 
 
----
-
-To-do?
+### To-do?
 
 * Add UI/UX to create one's own song
 
