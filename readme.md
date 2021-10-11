@@ -29,12 +29,12 @@ Test multiple options for genetic algorithm
 * Cross-over
 * Mutation
 * Next generation selection
- 
+
 <br>
 
 Including **Tournament selection (parent selection)**  and **Gradual replacement (next generation selection)** yields good result.
 
-* Best combination so far : Count Fitness + Tournament selection (parent selection) + Total replacement (next generation selection)
+* Best combination so far : Count Fitness + Tournament selection (parent selection) + Total replacement (next generation selection)  
   (Rest of the options are negligible)
 
 
@@ -56,12 +56,12 @@ Info (current average fitness of the population, whole population) is easily vis
 
 <br>
 
-Notes with different speed is shown on this music sheet.
-Octave is represented with up(↑) and down(↓) arrows.
-There are 12 kinds of notes in each octave (C, C#, D, D#, E, F, F#, G, G#, A, A#, B).
-3 speed modes : 0 (𝅘𝅥𝅯), 1(𝅘𝅥𝅮), 2(𝅝).
+Notes with different speed is shown on this music sheet.  
+Octave is represented with up(↑) and down(↓) arrows.  
+There are 12 kinds of notes in each octave (C, C#, D, D#, E, F, F#, G, G#, A, A#, B).  
+3 speed modes : 0 (𝅘𝅥𝅯), 1(𝅘𝅥𝅮), 2(𝅝).    
 
-Black note is the target, red note is the current best individual.
+Black note is the target, red note is the current best individual.  
 When two matches, the color turns blue.
 
  ![musicsheet](img/readme-howto-musicsheet.jpg)
@@ -85,22 +85,22 @@ src
 └── UI.js
 ```
 
-* App.js
+* App.js  
   : hyperparameter settings, runs evolutionary cycle using Population, tracks individual with best fitness  
 
-* Population.js
+* Population.js  
   : Keeps population of Songs, evolutionary cycle methods implemented
 
-* Song.js
+* Song.js  
   : genotype (array of notes), fitness metric, cross-over, mutation
 
-* UI.js
+* UI.js  
   : visualization (p5.js) + audio play (p5.sound.js)
 
   <br>
 
 
-- lib/p5.js and lib/p5.sound.js
+- lib/p5.js and lib/p5.sound.js  
 
   : Javascript visualization/audio library for UI creation
 
@@ -110,7 +110,7 @@ src
 
 ### Representation
 
-Each **musical note** is represented with a pair of integers : [kind of note, speed].
+Each **musical note** is represented with a pair of integers : [kind of note, speed].  
 There are 36 kinds of notes (12 notes in each octave, 3 octaves available) and 3 speed mode.
 
  ```js
@@ -122,7 +122,7 @@ function newNote() {
   return [floor(random(0,37)), floor(random(0,3))]; // [kind, speed]
 }
  ```
- 
+
 <br>
 <br>
 
