@@ -6,7 +6,7 @@ Genetic algorithm simulator made with p5.js and p5.sound.js
 
 ![readme-overview](img/readme-overview.jpg)
 
-
+<br>
 
 Starting from random notes (represented by numbers), find target song out of gazillion possible combinations of notes.
 
@@ -15,27 +15,22 @@ Starting from random notes (represented by numbers), find target song out of gaz
 
 ![readme-simualte](img/readme-simualte.gif)
 
-
+<br>
 
 Play the notes whenever you want (play answer / play best individual button)
 
 ![readme-simualte](img/readme-play.gif)
 
-
+<br>
 
 Test multiple options for genetic algorithm
-
 * Fitness 
-
 * Parent selection
-
 * Cross-over
-
 * Mutation
-
 * Next generation selection
-
-  
+ 
+<br>
 
 Including **Tournament selection (parent selection)**  and **Gradual replacement (next generation selection)** yields good result.
 
@@ -43,8 +38,8 @@ Including **Tournament selection (parent selection)**  and **Gradual replacement
   (Rest of the options are negligible)
 
 
-
-
+<br>
+<br>
 
 
 ### How to use it
@@ -53,13 +48,13 @@ Program settings (hyperparameters) – being set only at the first start (not be
 
 ![hyperparameters](img/readme-howto-hyperparameters.jpg)
 
- <div style="page-break-after: always;"></div>
+<br>
 
 Info (current average fitness of the population, whole population) is easily visible.
 
 ![info](img/readme-howto-info.jpg)
 
-
+<br>
 
 Notes with different speed is shown on this music sheet.
 Octave is represented with up(↑) and down(↓) arrows.
@@ -69,10 +64,10 @@ There are 12 kinds of notes in each octave (C, C#, D, D#, E, F, F#, G, G#, A, A#
 Black note is the target, red note is the current best individual.
 When two matches, the color turns blue.
 
- ![musicsheet](img\readme-howto-musicsheet.jpg)
+ ![musicsheet](img/readme-howto-musicsheet.jpg)
 
-
-
+<br>
+<br>
 
 ### Program Structure
 ```markdown
@@ -110,8 +105,8 @@ src
   : Javascript visualization/audio library for UI creation
 
 
-
-
+<br>
+<br>
 
 ### Representation
 
@@ -127,8 +122,9 @@ function newNote() {
   return [floor(random(0,37)), floor(random(0,3))]; // [kind, speed]
 }
  ```
-
-
+ 
+<br>
+<br>
 
 ### To-do?
 
